@@ -35,3 +35,8 @@ The biggest pain in the ass will be your Nest camera install!  Once that is done
   * You'll also need to do this for your Maven build for package.
   * For prod, create application-prod.properties and add this property with your key.  Place it in the root directory of your application, some place you will use run.sh (note - I run dev on Windows and prod on Linux)
   * Add your Sunrise Sunset URL that includes your lat and lng
+## Running
+If you followed the setup steps, running is just firing up the Spring Boot main class, SeasonalSnapshotsApplication.  This will run an embedded Tomcat instance on port 8001 (modifiable within application.properties).
+* You don't have to wait for sunrise to get going.  You can hit http://localhost:8001/test?phase=SUNRISE to do an immediate capture across all cameras.
+* All snapshots are stored locally and accessible through the web server.  Each is stored under a lifecycle phase (sunrise, solar_noon, sunset).  I tried setting these as attributes on the image/snapshot, but this turned out to be super finicky across Windows and Linux.
+* All view logic is on index.html.  It was hacked together and not clean, but it gets the job done right now.

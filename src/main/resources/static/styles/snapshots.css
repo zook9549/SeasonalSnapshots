@@ -1,0 +1,52 @@
+body {
+    font-family: 'Quicksand', sans-serif;
+    font-size: large;
+}
+
+.main-body {
+    padding-top: 60px;
+}
+
+.btnContainer input {
+    width: 170px;
+    background-color: darkgreen;
+    color: white;
+    font-size: 16px;
+}
+
+.input-group-addon {
+    min-width: 205px;
+    text-align: left;
+}
+
+.btnContainer {
+    margin: 10px;
+}
+
+.alert {
+    display: none;
+    position: absolute;
+    z-index: 10000;
+    width: 100%;
+}
+
+.btn {
+    font-size: larger;
+    width: 100%;
+}
+
+.active {
+    font-weight: 500;
+    background-color: #563d7c;
+}
+
+#errorAlert {
+    background-color: darkred;
+}
+
+#errorMessage {
+    font-size: larger;
+    color: #fff;
+    font-weight: bolder;
+
+}

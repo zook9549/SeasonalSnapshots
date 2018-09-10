@@ -63,12 +63,12 @@ public class SeasonalSnapshotsApplication {
 
     @RequestMapping(value = "/callback")
     public void callback(@RequestParam(value = "code") String code) {
-        System.out.println(code);
+        LOG.info("Callback code found: " + code);
     }
 
     @RequestMapping(value = "/test")
-    public void test(@RequestParam(value = "phase") String phase) throws Exception {
-        archiveSnapshot(LocalDateTime.now(), Snapshot.Phase.valueOf(phase));
+    public void test(@RequestParam(value = "phase", required = false) Snapshot.Phase phase) throws Exception {
+        archiveSnapshot(LocalDateTime.now(), phase);
     }
 
     @RequestMapping(value = "/getCameras")

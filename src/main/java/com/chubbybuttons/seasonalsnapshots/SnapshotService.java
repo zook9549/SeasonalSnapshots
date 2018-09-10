@@ -105,7 +105,11 @@ public class SnapshotService {
 
 
     public File getArchiveFile(Camera camera, Snapshot.Phase phase, LocalDateTime snapshotTime) {
-        String path = getBaseArchivePath(camera) + '/' + phase.toString() + '/' + snapshotTime.format(formatter) + ".jpg";
+        String path = getBaseArchivePath(camera) + '/';
+        if (phase != null) {
+            path += phase.toString() + '/';
+        }
+        path += snapshotTime.format(formatter) + ".jpg";
         return new File(path);
     }
 
@@ -123,25 +127,11 @@ public class SnapshotService {
         return null;
     }
 
-    private Snapshot.Phase mapPhase(Snapshot snapshot) {
-        LocalDateTime dateTime = snapshot.getSnapshotTime();
-        // todo this should be stored when saved. Won't work as file attribute.  If needs to be done on read, use api for the specific date.  Currently, it's goign to pull test images which won't flow smooth
-        int hour = dateTime.getHour();
-        if (hour > 4 && hour < 10) {
-            return Snapshot.Phase.SUNRISE;
-        } else if (hour >= 10 && hour < 16) {
-            return Snapshot.Phase.SOLAR_NOON;
-        } else {
-            return Snapshot.Phase.SUNSET;
-        }
-    }
-
     @Value("${camera.api.access_token}")
     private String accessToken;
 
     @Value("${camera.api.url}")
     private String apiURL;
-
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm");
 }

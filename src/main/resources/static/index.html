@@ -48,8 +48,9 @@
                     url += "&phase=" + $("#frmApp")[0].sunset.value;
                 }
                 imgs = [];
+                counter = 0;
                 if (to) {
-                    clearTimeout(to);
+                    to = clearTimeout(to);
                 }
                 $.ajax({
                     url: url,
@@ -119,6 +120,15 @@
 
             });
         }
+
+        function toggleSlideShow() {
+            if (to) {
+                to = clearTimeout(to);
+            } else {
+                to = setTimeout(slideShow, 2000);
+            }
+        }
+
     </script>
 
     <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet"/>
@@ -176,7 +186,7 @@
         </div>
     </div>
 </form>
-<div class='slideshow-container' id="holder">
+<div class='slideshow-container' onclick="toggleSlideShow();" id="holder">
 </div>
 </body>
 </html>

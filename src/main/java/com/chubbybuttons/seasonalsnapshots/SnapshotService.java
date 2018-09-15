@@ -1,5 +1,6 @@
 package com.chubbybuttons.seasonalsnapshots;
 
+import com.chubbybuttons.seasonalsnapshots.util.GifSequenceWriter;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -15,6 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,6 +64,27 @@ public class SnapshotService {
         snapshot.setArchivePath(pic.getPath());
         snapshot.setImageName(pic.getName());
         return snapshot;
+    }
+
+    public String getStitchedArchive(Camera camera, LocalDate startDate, LocalDate endDate, Snapshot.Phase[] phases) throws IOException {
+        Collection<Snapshot> snapshots = getArchiveSnapshots(camera, startDate, endDate, phases);
+        ImageOutputStream output = null;
+        GifSequenceWriter writer = null;
+        File result = new File(getBaseArchivePath(camera) + "/animated.gif");// todo make the file name unique
+        for (Snapshot snapshot : snapshots) {
+            File snapshotFile = getArchiveFile(camera, snapshot.getSnapshotPhase(), snapshot.getSnapshotTime());
+            BufferedImage image = ImageIO.read(snapshotFile);
+            if (writer == null) {
+                output = new FileImageOutputStream(result);
+                writer = new GifSequenceWriter(output, image.getType(), 1, true);
+            }
+            writer.writeToSequence(image);
+        }
+        if (writer != null) {
+            writer.close();
+            output.close();
+        }
+        return "/snapshots/" + camera.getName() + "/animated.gif";
     }
 
     public Collection<Snapshot> getArchiveSnapshots(Camera camera, LocalDate startDate, LocalDate endDate, Snapshot.Phase[] phases) {
@@ -114,8 +140,8 @@ public class SnapshotService {
     }
 
     private String getBaseArchivePath(Camera camera) {
-        String basePath = getClass().getClassLoader().getResource("static").getPath();
-        return basePath + "/snapshots/" + camera.getName();
+        String basePath = getClass().getClassLoader().getResource(snapshotDirectory).getPath();
+        return basePath + '/' + camera.getName();
     }
 
     private Snapshot.Phase mapPhase(File file) {
@@ -132,6 +158,9 @@ public class SnapshotService {
 
     @Value("${camera.api.url}")
     private String apiURL;
+
+    @Value("${snapshot.dir}")
+    private String snapshotDirectory;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm");
 }

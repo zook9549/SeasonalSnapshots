@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -20,7 +19,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
-@EnableAutoConfiguration
 @SpringBootApplication
 @EnableScheduling
 @EnableEncryptableProperties
@@ -79,10 +77,19 @@ public class SeasonalSnapshotsApplication {
     @RequestMapping(value = "/getSnapshotPaths")
     public Collection<Snapshot> getSnapshotPaths(@RequestParam(value = "camera") String cameraName,
                                                  @RequestParam(value = "phase", required = false) Snapshot.Phase[] phases,
-                                                 @RequestParam(value = "start") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate start,
-                                                 @RequestParam(value = "end", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate end) throws IOException {
+                                                 @RequestParam(value = "start") @DateTimeFormat(pattern = "MM/dd/yyyy") LocalDate start,
+                                                 @RequestParam(value = "end", required = false) @DateTimeFormat(pattern = "MM/dd/yyyy") LocalDate end) throws IOException {
         Camera camera = new Camera(cameraName);
         return snapshotService.getArchiveSnapshots(camera, start, end, phases);
+    }
+
+    @RequestMapping(value = "/getSnapshotPathsStitched")
+    public String getSnapshotPathsStitched(@RequestParam(value = "camera") String cameraName,
+                                           @RequestParam(value = "phase", required = false) Snapshot.Phase[] phases,
+                                           @RequestParam(value = "start") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate start,
+                                           @RequestParam(value = "end", required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate end) throws IOException {
+        Camera camera = new Camera(cameraName);
+        return snapshotService.getStitchedArchive(camera, start, end, phases);
     }
 
 

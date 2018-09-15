@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.*;
@@ -13,36 +15,26 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Service
+@RestController
 @PropertySource("classpath:application.properties")
 public class SeasonalTimeService {
 
     public LocalDateTime getPhaseTime(Snapshot.Phase phase) {
         switch (phase) {
             case SUNRISE:
-                return getSunrise();
+                return getTimes()[0];
             case SOLAR_NOON:
-                return getSolarNoon();
+                return getTimes()[1];
             case SUNSET:
-                return getSunset();
+                return getTimes()[2];
             default:
                 return null;
         }
     }
 
-    public LocalDateTime getSunrise() {
-        return getTimes(LocalDate.now())[0];
-    }
-
-    public LocalDateTime getSolarNoon() {
-        return getTimes(LocalDate.now())[1];
-    }
-
-    public LocalDateTime getSunset() {
-        return getTimes(LocalDate.now())[2];
-    }
-
-    private LocalDateTime[] getTimes(LocalDate date) {
-        if (localDateTimes[0] == null || !date.equals(localDateTimes[0].toLocalDate())) {
+    @RequestMapping(value = "/getTimes")
+    public LocalDateTime[] getTimes() {
+        if (localDateTimes[0] == null || !LocalDate.now().equals(localDateTimes[0].toLocalDate())) {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<Map> response = restTemplate.getForEntity(apiURL, Map.class);
             Map results = (Map) response.getBody().get("results");

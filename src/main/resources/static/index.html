@@ -26,6 +26,7 @@
         var imgDates = [];
         var to;
         var mod = true;
+        var timing = 1000;
         d = new Date();
         $(document).ready(function () {
             getCameras();
@@ -73,7 +74,7 @@
                         }
                         console.log(imgs);
                         if (imgs.length > 1) {
-                            to = setTimeout(slideShow, 2000);
+                            to = setTimeout(slideShow, timing);
                         }
                     },
                     error: function (er) {
@@ -91,15 +92,16 @@
             } else {
                 counter = 0;
             }
-            bottomEl.hide();
             mod = !mod;
             bottomEl.attr("src", imgs[counter].src);
             $("#snapshotCaption").html((counter + 1) + " / " + imgs.length + " : " + imgs[counter].alt);
             bottomZIndex = bottomEl.css('z-index')
             bottomEl.css('z-index', topEl.css('z-index'));
             topEl.css('z-index', bottomZIndex);
-            bottomEl.fadeIn(900);
-            to = setTimeout(slideShow, 2000);
+            bottomEl.toggle("fade", 800, function(){
+                topEl.hide();
+            });
+            to = setTimeout(slideShow, timing);
         }
 
         function getCameras() {
@@ -128,7 +130,7 @@
             if (to) {
                 to = clearTimeout(to);
             } else {
-                to = setTimeout(slideShow, 2000);
+                to = setTimeout(slideShow, timing);
             }
         }
 

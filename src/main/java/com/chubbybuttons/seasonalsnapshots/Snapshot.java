@@ -1,6 +1,7 @@
 package com.chubbybuttons.seasonalsnapshots;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Snapshot implements Comparable<Snapshot> {
 
@@ -71,6 +72,22 @@ public class Snapshot implements Comparable<Snapshot> {
     @Override
     public int compareTo(Snapshot o) {
         return imageName.compareTo(o.getImageName());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Snapshot snapshot = (Snapshot) o;
+        return Objects.equals(snapshotTime, snapshot.snapshotTime) &&
+                snapshotPhase == snapshot.snapshotPhase &&
+                Objects.equals(archivePath, snapshot.archivePath) &&
+                Objects.equals(imageName, snapshot.imageName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(snapshotTime, snapshotPhase, archivePath, imageName);
     }
 
     private byte[] image;

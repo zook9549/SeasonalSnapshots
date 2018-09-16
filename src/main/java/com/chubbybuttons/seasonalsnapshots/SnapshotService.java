@@ -95,7 +95,7 @@ public class SnapshotService {
         Collection<File> files = FileUtils.listFiles(new File(getBaseArchivePath(camera)), combinedFilter, TrueFileFilter.INSTANCE);
         Collection<Snapshot> snapshots = new TreeSet<>();
         for (File file : filterFilesByPhase(files, phases)) {
-            snapshots.add(mapSnapShot(camera, file));
+            snapshots.add(mapSnapShot(file));
         }
         return snapshots;
     }
@@ -116,16 +116,14 @@ public class SnapshotService {
         }
     }
 
-    private Snapshot mapSnapShot(Camera camera, File file) {
+    private Snapshot mapSnapShot(File file) {
         Snapshot snapshot = new Snapshot();
         snapshot.setSnapshotTime(LocalDateTime.parse(FilenameUtils.getBaseName(file.getName()), formatter));
         snapshot.setSnapshotPhase(mapPhase(file));
         snapshot.setImageName(file.getName());
-        if (snapshot.getSnapshotPhase() != null) {
-            snapshot.setArchivePath("/snapshots/" + camera.getName() + '/' + snapshot.getSnapshotPhase().toString() + '/' + file.getName());
-        } else {
-            snapshot.setArchivePath("/snapshots/" + camera.getName() + '/' + file.getName());
-        }
+        String normalizedPath = file.getPath().replace('\\', '/');
+        normalizedPath = normalizedPath.substring(normalizedPath.indexOf(snapshotBaseDirectory) + snapshotBaseDirectory.length());
+        snapshot.setArchivePath(normalizedPath);
         return snapshot;
     }
 
@@ -140,7 +138,7 @@ public class SnapshotService {
     }
 
     private String getBaseArchivePath(Camera camera) {
-        String basePath = getClass().getClassLoader().getResource(snapshotDirectory).getPath();
+        String basePath = getClass().getClassLoader().getResource(snapshotBaseDirectory + '/' + snapshotDirectoryName).getPath();
         return basePath + '/' + camera.getName();
     }
 
@@ -160,7 +158,10 @@ public class SnapshotService {
     private String apiURL;
 
     @Value("${snapshot.dir}")
-    private String snapshotDirectory;
+    private String snapshotDirectoryName;
+
+    @Value("${snapshot.base.dir}")
+    private String snapshotBaseDirectory;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm");
 }

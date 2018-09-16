@@ -15,7 +15,7 @@ body {
 }
 
 .input-group-addon {
-    min-width: 205px;
+    min-width: 130px;
     text-align: left;
 }
 
@@ -48,5 +48,25 @@ body {
     font-size: larger;
     color: #fff;
     font-weight: bolder;
+}
 
+#snapshotCaption {
+    background-color: #000;
+    opacity: .5;
+    position: absolute;
+    z-index: 1000;
+    color: white;
+}
+
+#snapshot1 {
+    position: absolute;
+    z-index: 2;
+    width: 100%;
+}
+
+#snapshot2 {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    width: 100%;
 }

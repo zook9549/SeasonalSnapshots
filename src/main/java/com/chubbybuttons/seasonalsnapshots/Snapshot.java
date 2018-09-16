@@ -1,5 +1,7 @@
 package com.chubbybuttons.seasonalsnapshots;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -91,6 +93,7 @@ public class Snapshot implements Comparable<Snapshot> {
     }
 
     private byte[] image;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@h:mm a")
     private LocalDateTime snapshotTime;
     private Phase snapshotPhase;
     private String archivePath;

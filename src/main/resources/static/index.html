@@ -36,51 +36,55 @@
             $("#endDate").datepicker();
             $('button#submitButton').click(function (e) {
                 e.preventDefault();
-                console.log($("#frmApp")[0].cameraKey.value);
-                var url = '/getSnapshotPaths?camera=' + $("#frmApp")[0].cameraKey.value + "&start=" +
-                    $("#frmApp")[0].startDate.value + "&end=" + $("#frmApp")[0].endDate.value;
-                if ($("#frmApp")[0].sunrise.checked) {
-                    url += "&phase=" + $("#frmApp")[0].sunrise.value;
-                }
-                if ($("#frmApp")[0].solarNoon.checked) {
-                    url += "&phase=" + $("#frmApp")[0].solarNoon.value;
-                }
-                if ($("#frmApp")[0].sunset.checked) {
-                    url += "&phase=" + $("#frmApp")[0].sunset.value;
-                }
-                imgs = [];
-                counter = 0;
-                if (to) {
-                    to = clearTimeout(to);
-                }
-                $.ajax({
-                    url: url,
-                    method: "GET",
-                    dataType: 'json',
-                    processData: false,
-                    contentType: false,
-                    success: function (data) {
-                        for (var i = 0; i < data.length; i++) {
-                            if (i == 0) {
-                                $("#holder").html("<img id=\"snapshot1\" src=\"" + data[i].archivePath + "\" style=\"position: absolute; z-index: 2; width: 100%;\">" +
-                                    "<img id=\"snapshot2\" src=\"" + data[i].archivePath + "\" style=\"display:none;position: absolute; z-index: 1; width: 100%;\">" +
-                                    "<div id=\"snapshotCaption\" style='position:absolute;z-index:1000;color:white;'>1" + " / " + data.length + " : " + data[i].snapshotTime + "</div>\n");
-                            }
-                            var img = new Image();
-                            img.src = data[i].archivePath;
-                            img.alt = data[i].snapshotTime;
-                            imgs[i] = img;
-                            imgDates[i] = data[i].snapshotTime;
-                        }
-                        console.log(imgs);
-                        if (imgs.length > 1) {
-                            to = setTimeout(slideShow, timing);
-                        }
-                    },
-                    error: function (er) {
-                        $("#errorAlert").fadeIn(500).fadeOut(2000);
+                var camera = $("#frmApp")[0].cameraKey.value;
+                if(camera) {
+                    var url = '/getSnapshotPaths?camera=' + camera + "&start=" +
+                        $("#frmApp")[0].startDate.value + "&end=" + $("#frmApp")[0].endDate.value;
+                    if ($("#frmApp")[0].sunrise.checked) {
+                        url += "&phase=" + $("#frmApp")[0].sunrise.value;
                     }
-                });
+                    if ($("#frmApp")[0].solarNoon.checked) {
+                        url += "&phase=" + $("#frmApp")[0].solarNoon.value;
+                    }
+                    if ($("#frmApp")[0].sunset.checked) {
+                        url += "&phase=" + $("#frmApp")[0].sunset.value;
+                    }
+                    imgs = [];
+                    counter = 0;
+                    if (to) {
+                        to = clearTimeout(to);
+                    }
+                    $.ajax({
+                        url: url,
+                        method: "GET",
+                        dataType: 'json',
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            for (var i = 0; i < data.length; i++) {
+                                if (i == 0) {
+                                    $("#holder").html("<img id=\"snapshot1\" src=\"" + data[i].archivePath + "\">" +
+                                        "<img id=\"snapshot2\" src=\"" + data[i].archivePath + "\">" +
+                                        "<div id=\"snapshotCaption\">1" + " / " + data.length + " : " + data[i].snapshotTime + "</div>\n");
+                                }
+                                var img = new Image();
+                                img.src = data[i].archivePath;
+                                img.alt = data[i].snapshotTime;
+                                imgs[i] = img;
+                                imgDates[i] = data[i].snapshotTime;
+                            }
+                            console.log(imgs);
+                            if (imgs.length > 1) {
+                                to = setTimeout(slideShow, timing);
+                            }
+                        },
+                        error: function (er) {
+                            $("#errorAlert").fadeIn(500).fadeOut(2000);
+                        }
+                    });
+                } else {
+                    console.log("No camera selected")
+                }
             });
         });
 
@@ -93,14 +97,13 @@
                 counter = 0;
             }
             mod = !mod;
+            bottomEl.hide();
             bottomEl.attr("src", imgs[counter].src);
             $("#snapshotCaption").html((counter + 1) + " / " + imgs.length + " : " + imgs[counter].alt);
             bottomZIndex = bottomEl.css('z-index')
             bottomEl.css('z-index', topEl.css('z-index'));
             topEl.css('z-index', bottomZIndex);
-            bottomEl.toggle("fade", 800, function(){
-                topEl.hide();
-            });
+            bottomEl.toggle("fade", 800);
             to = setTimeout(slideShow, timing);
         }
 

@@ -24,8 +24,6 @@ body {
 }
 
 .alert {
-    display: none;
-    position: absolute;
     z-index: 10000;
     width: 100%;
 }
@@ -40,11 +38,8 @@ body {
     background-color: #563d7c;
 }
 
-#errorAlert {
+.alert-error {
     background-color: darkred;
-}
-
-#errorMessage {
     font-size: larger;
     color: #fff;
     font-weight: bolder;

@@ -26,9 +26,6 @@ public class SeasonalTimeService {
 
 
     public LocalDateTime getPhaseTime(Snapshot.Phase phase) {
-        if (isDateTimeExpired(phase)) {
-            updateExpiredDateTimes();
-        }
         return phaseSchedules.get(phase).getNextSnapshotDateTime();
     }
 
@@ -52,11 +49,12 @@ public class SeasonalTimeService {
         return timesForDate;
     }
 
-    private boolean isDateTimeExpired(Snapshot.Phase phase) {
+    public boolean isPhaseExpired(Snapshot.Phase phase) {
         PhaseSchedule phaseSchedule = phaseSchedules.get(phase);
-        LocalDateTime nextPhaseDateTime = phaseSchedule.getNextSnapshotDateTime();
-        return nextPhaseDateTime == null || nextPhaseDateTime.isBefore(LocalDateTime.now());
+        LocalDateTime phaseDateTime = phaseSchedule.getNextSnapshotDateTime();
+        return phaseDateTime == null || LocalDateTime.now().isAfter(phaseDateTime);
     }
+
 
     private LocalDateTime getLocalDateTime(LocalDate date, String timestamp) {
         LocalTime ldt = LocalTime.parse(timestamp, pattern);
@@ -64,7 +62,7 @@ public class SeasonalTimeService {
         return zdt.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
     }
 
-    private void updateExpiredDateTimes() {
+    public void updatePhaseSchedules() {
         LocalDateTime currentDate = LocalDateTime.now();
         LocalDateTime tomorrow = currentDate.plusDays(1);
         Map<Snapshot.Phase, LocalDateTime> dateTimes = getTimesForDate(tomorrow.toLocalDate());
@@ -81,8 +79,9 @@ public class SeasonalTimeService {
         }
     }
 
+
     @PostConstruct
-    public void init() {
+    private void init() {
         LocalDateTime currentDate = LocalDateTime.now();
         Map<Snapshot.Phase, LocalDateTime> dateTimes = getTimesForDate(currentDate.toLocalDate());
         boolean containsExpiredDates = false;
@@ -101,11 +100,10 @@ public class SeasonalTimeService {
             LocalDateTime tomorrow = currentDate.plusDays(1);
             dateTimes = getTimesForDate(tomorrow.toLocalDate());
             for (Snapshot.Phase phase : dateTimes.keySet()) {
-                if(isDateTimeExpired(phase)) {
+                if(isPhaseExpired(phase)) {
                     PhaseSchedule phaseSchedule = phaseSchedules.get(phase);
                     phaseSchedule.setNextSnapshotDateTime(dateTimes.get(phase));
                 }
-
             }
         }
         logTimes();

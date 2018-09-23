@@ -25,10 +25,10 @@
     </properties>
 
     <dependencies>
-<!--        <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter</artifactId>
-            </dependency>-->
+        <!--        <dependency>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-starter</artifactId>
+                    </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -70,6 +70,14 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>/src/main/resources/static/snapshots</directory>
+                <excludes>
+                    <exclude>**/*.jpg</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -77,51 +85,51 @@
             </plugin>
         </plugins>
     </build>
-   <!-- <repositories>
-        <repository>
-            <id>mavens</id>
-            <name>Maven main repo</name>
-            <url>http://central.maven.org/maven2/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>https://repo.spring.io/snapshot</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+    <!-- <repositories>
+         <repository>
+             <id>mavens</id>
+             <name>Maven main repo</name>
+             <url>http://central.maven.org/maven2/</url>
+             <snapshots>
+                 <enabled>true</enabled>
+             </snapshots>
+         </repository>
+         <repository>
+             <id>spring-snapshots</id>
+             <name>Spring Snapshots</name>
+             <url>https://repo.spring.io/snapshot</url>
+             <snapshots>
+                 <enabled>true</enabled>
+             </snapshots>
+         </repository>
+         <repository>
+             <id>spring-milestones</id>
+             <name>Spring Milestones</name>
+             <url>https://repo.spring.io/milestone</url>
+             <snapshots>
+                 <enabled>false</enabled>
+             </snapshots>
+         </repository>
+     </repositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>https://repo.spring.io/snapshot</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>-->
+     <pluginRepositories>
+         <pluginRepository>
+             <id>spring-snapshots</id>
+             <name>Spring Snapshots</name>
+             <url>https://repo.spring.io/snapshot</url>
+             <snapshots>
+                 <enabled>true</enabled>
+             </snapshots>
+         </pluginRepository>
+         <pluginRepository>
+             <id>spring-milestones</id>
+             <name>Spring Milestones</name>
+             <url>https://repo.spring.io/milestone</url>
+             <snapshots>
+                 <enabled>false</enabled>
+             </snapshots>
+         </pluginRepository>
+     </pluginRepositories>-->
 
 
 </project>

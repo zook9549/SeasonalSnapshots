@@ -127,6 +127,9 @@ public class SnapshotService {
         return snapshot;
     }
 
+    public boolean isPhaseArchived(Camera camera, Snapshot.Phase phase, LocalDateTime snapshotTime) {
+        return getArchiveFile(camera, phase, snapshotTime).exists();
+    }
 
     public File getArchiveFile(Camera camera, Snapshot.Phase phase, LocalDateTime snapshotTime) {
         String path = getBaseArchivePath(camera) + '/';

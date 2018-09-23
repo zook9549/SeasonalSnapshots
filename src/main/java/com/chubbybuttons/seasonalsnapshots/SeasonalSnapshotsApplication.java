@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -31,12 +30,11 @@ public class SeasonalSnapshotsApplication {
 
     @Scheduled(fixedRate = 30000)
     public void checkForSnapshot() throws Exception {
-        LocalDateTime dateTime = LocalDateTime.now();
         for (Snapshot.Phase phase : Snapshot.Phase.values()) {
-            LocalDateTime phaseTime = seasonalTimeService.getPhaseTime(phase);
-            if (equalsSameTime(dateTime, phaseTime)) {
-                LOG.info("Archiving image for phase " + phase);
+            if (seasonalTimeService.isPhaseExpired(phase)) {
+                LocalDateTime phaseTime = seasonalTimeService.getPhaseTime(phase);
                 archiveSnapshot(phaseTime, phase);
+                seasonalTimeService.updatePhaseSchedules();
                 break;
             }
         }
@@ -45,18 +43,15 @@ public class SeasonalSnapshotsApplication {
     private void archiveSnapshot(LocalDateTime dateTime, Snapshot.Phase phase) throws Exception {
         Collection<Camera> cameras = snapshotService.getCameras();
         for (Camera camera : cameras) {
-            LOG.info(camera.toString());
-            if (!snapshotService.getArchiveFile(camera, phase, dateTime).exists()) {
+            LOG.debug(camera.toString());
+            if (!snapshotService.isPhaseArchived(camera, phase, dateTime)) {
                 Snapshot snapshot = snapshotService.getSnapshot(camera, phase);
                 snapshotService.archiveSnapshot(camera, snapshot);
+                LOG.info("Archived image for phase " + phase);
             } else {
-                LOG.info("Snapshot already archived");
+                LOG.debug("Snapshot already archived");
             }
         }
-    }
-
-    private boolean equalsSameTime(LocalDateTime current, LocalDateTime comparison) {
-        return Duration.between(current, comparison).toMinutes() == 0 && current.getMinute() == comparison.getMinute();
     }
 
     @RequestMapping(value = "/callback")

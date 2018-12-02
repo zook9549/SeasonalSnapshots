@@ -3,6 +3,10 @@ body {
     font-size: large;
 }
 
+.input-group-text {
+    width:150px;
+}
+
 .main-body {
     padding-top: 60px;
 }
@@ -12,6 +16,12 @@ body {
     background-color: darkgreen;
     color: white;
     font-size: 16px;
+}
+
+.carousel-caption {
+    top: 0;
+    bottom: auto;
+    text-shadow: 1px 1px 2px black;
 }
 
 .input-group-addon {

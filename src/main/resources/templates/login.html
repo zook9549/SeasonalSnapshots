@@ -3,17 +3,17 @@
     <meta charset="UTF-8">
     <title>Snapshots Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <script src="/scripts/jquery-min.js"></script>
-    <script src="/scripts/jquery-ui.min.js"></script>
-    <link href="./styles/jquery-ui.css" rel="stylesheet"/>
-    <link href="/styles/bootstrap.min.css" rel="stylesheet"/>
-    <script src="/scripts/bootstrap.min.js"></script>
+    <script src="scripts/jquery-min.js"></script>
+    <script src="scripts/jquery-ui.min.js"></script>
+    <link href="styles/jquery-ui.css" rel="stylesheet"/>
+    <link href="styles/bootstrap.min.css" rel="stylesheet"/>
+    <script src="scripts/bootstrap.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet"/>
-    <link href="/styles/snapshots.css" rel="stylesheet"/>
+    <link href="styles/snapshots.css" rel="stylesheet"/>
 </head>
 <body>
 
-<form id="frmApp" role="form" name="f" th:action="@{/login}" method="post">
+<form id="frmApp" role="form" name="f" th:action="@{login}" method="post">
 
     <div class="form-group">
 
@@ -25,15 +25,17 @@
         </div>
 
         <div id="userNameContainer" class="input-group input-group-lg">
-            <label for="username" class="sr-only">User Name</label>
-            <span class="input-group-addon" id="basic-addon">User Name</span>
+            <div class="input-group-prepend form-label">
+                <span class="input-group-text" id="basic-addon">User Name</span>
+            </div>
             <input type="text" name="username" id="username"
                    placeholder="Enter your user name"
                    class="form-control"/>
         </div>
         <div id="passwordContainer" class="input-group input-group-lg">
-            <label for="password" class="sr-only">User Name</label>
-            <span class="input-group-addon" id="basic-addon2">Password</span>
+            <div class="input-group-prepend form-label">
+                <span class="input-group-text" id="basic-addon2">Password</span>
+            </div>
             <input type="password" name="password" id="password"
                    placeholder="Enter your password"
                    class="form-control"/>

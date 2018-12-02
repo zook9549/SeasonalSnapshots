@@ -197,7 +197,7 @@
                 preventRecursion = !preventRecursion;
             }
             return deferredReturnValue;
-        };
+        }
         if (jQuery.Deferred) {
             // add .promise() method to tic
             timedInvocationChain.promise = function (type, target) {
@@ -836,8 +836,7 @@
         });
 
         return callbackVariable;
-    };
-
+    }
     // $$ only for backward compatibility
     window.$$ = jQuery.$$ = jQuery.X = X;
 

@@ -28,7 +28,7 @@ public class SeasonalSnapshotsApplication {
         SpringApplication.run(SeasonalSnapshotsApplication.class, args);
     }
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedDelay = 30000)
     public void checkForSnapshot() throws Exception {
         for (Snapshot.Phase phase : Snapshot.Phase.values()) {
             if (seasonalTimeService.isPhaseExpired(phase)) {
@@ -73,7 +73,7 @@ public class SeasonalSnapshotsApplication {
     public Collection<Snapshot> getSnapshotPaths(@RequestParam(value = "camera") String cameraName,
                                                  @RequestParam(value = "phase", required = false) Snapshot.Phase[] phases,
                                                  @RequestParam(value = "start") @DateTimeFormat(pattern = "MM/dd/yyyy") LocalDate start,
-                                                 @RequestParam(value = "end", required = false) @DateTimeFormat(pattern = "MM/dd/yyyy") LocalDate end) throws IOException {
+                                                 @RequestParam(value = "end", required = false) @DateTimeFormat(pattern = "MM/dd/yyyy") LocalDate end) {
         Camera camera = new Camera(cameraName);
         return snapshotService.getArchiveSnapshots(camera, start, end, phases);
     }

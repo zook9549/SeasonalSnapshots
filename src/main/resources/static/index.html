@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <title>View Snapshots</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <script src="/scripts/jquery-min.js"></script>
-    <script src="/scripts/jquery-ui.min.js"></script>
-    <link href="./styles/jquery-ui.css" rel="stylesheet"/>
-    <link href="/styles/bootstrap.min.css" rel="stylesheet"/>
-    <script src="/scripts/bootstrap.min.js"></script>
+    <script src="scripts/jquery-min.js"></script>
+    <script src="scripts/jquery-ui.min.js"></script>
+    <link href="styles/jquery-ui.css" rel="stylesheet"/>
+    <link href="styles/bootstrap.min.css" rel="stylesheet"/>
+    <script src="scripts/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
+          integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
 
     <script>
         Date.prototype.yyyymmdd = function (yearAdjustment) {
@@ -37,8 +40,8 @@
             $('button#submitButton').click(function (e) {
                 e.preventDefault();
                 var camera = $("#frmApp")[0].cameraKey.value;
-                if(camera) {
-                    var url = '/getSnapshotPaths?camera=' + camera + "&start=" +
+                if (camera) {
+                    var url = 'getSnapshotPaths?camera=' + camera + "&start=" +
                         $("#frmApp")[0].startDate.value + "&end=" + $("#frmApp")[0].endDate.value;
                     if ($("#frmApp")[0].sunrise.checked) {
                         url += "&phase=" + $("#frmApp")[0].sunrise.value;
@@ -62,21 +65,14 @@
                         contentType: false,
                         success: function (data) {
                             for (var i = 0; i < data.length; i++) {
-                                if (i == 0) {
-                                    $("#holder").html("<img id=\"snapshot1\" src=\"" + data[i].archivePath + "\">" +
-                                        "<img id=\"snapshot2\" src=\"" + data[i].archivePath + "\">" +
-                                        "<div id=\"snapshotCaption\">1" + " / " + data.length + " : " + data[i].snapshotTime + "</div>\n");
-                                }
                                 var img = new Image();
-                                img.src = data[i].archivePath;
+                                img.src = '.' + data[i].archivePath;
                                 img.alt = data[i].snapshotTime;
                                 imgs[i] = img;
                                 imgDates[i] = data[i].snapshotTime;
                             }
                             console.log(imgs);
-                            if (imgs.length > 1) {
-                                to = setTimeout(slideShow, timing);
-                            }
+                            buildCarousel(imgs);
                         },
                         error: function (er) {
                             $("#errorAlert").fadeIn(500).fadeOut(2000);
@@ -88,27 +84,46 @@
             });
         });
 
-        function slideShow() {
-            var topEl = getSlideShowImage(true);
-            var bottomEl = getSlideShowImage(false);
-            if (counter < imgs.length - 1) {
-                counter++;
-            } else {
-                counter = 0;
+        function buildCarousel(imgs) {
+            var nav = "";
+            var slides = "";
+            for (var i = 0; i < imgs.length; i++) {
+                nav += "<li id=\"indicator" + i + "\" data-target=\"#carouselExampleIndicators\" data-slide-to=\"" + i + "\"";
+                slides += "<div class=\"carousel-item";
+
+
+                if (i == 0) {
+                    nav += " class=\"active\"";
+                    slides += " active"
+                }
+                nav += "></li>";
+                slides += "\">\n" +
+                    "            <img class=\"d-block w-100\" src=\"" + imgs[i].src + "\" alt=\"" + imgs[i].alt + "\">\n" +
+                    "            <div class=\"carousel-caption d-none d-md-block\">\n" +
+                    "                <p>" + imgs[i].alt + "</p>\n" +
+                    "            </div>\n" +
+                    "        </div>";
             }
-            mod = !mod;
-            bottomEl.hide();
-            bottomEl.attr("src", imgs[counter].src);
-            $("#snapshotCaption").html((counter + 1) + " / " + imgs.length + " : " + imgs[counter].alt);
-            bottomZIndex = bottomEl.css('z-index')
-            bottomEl.css('z-index', topEl.css('z-index'));
-            topEl.css('z-index', bottomZIndex);
-            bottomEl.toggle("fade", 800);
-            to = setTimeout(slideShow, timing);
+            $("#carouselExampleIndicators").html("<ol class=\"carousel-indicators\">" + nav + "</ol><div class=\"carousel-inner\">" + slides + "</div>" +
+            "<a class=\"carousel-control-prev\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"prev\">\n" +
+                "    <span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"></span>\n" +
+                "    <span class=\"sr-only\">Previous</span>\n" +
+                "  </a>\n" +
+                "  <a class=\"carousel-control-next\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"next\">\n" +
+                "    <span class=\"carousel-control-next-icon\" aria-hidden=\"true\"></span>\n" +
+                "    <span class=\"sr-only\">Next</span>\n" +
+                "  </a>");
+
+            $('.carousel').on('slide.bs.carousel', function (e) {
+                $("#indicator" + e.from).removeClass("active");
+                $("#indicator" + e.to).addClass("active");
+
+            })
         }
 
+
         function getCameras() {
-            $.getJSON("/getCameras", function (data) {
+            $.getJSON("getCameras", function (data) {
                 for (var i = 0; i < data.length; i++) {
                     $('#cameraKey')
                         .append($("<option></option>")
@@ -119,72 +134,54 @@
             });
         }
 
-        function getSlideShowImage(isVisible) {
-            if ($("#snapshot1").css('z-index') > $("#snapshot2").css('z-index')) {
-                return isVisible ? $("#snapshot1") : $("#snapshot2");
-            } else {
-                return isVisible ? $("#snapshot2") : $("#snapshot1");
-                ;
-            }
-        }
-
-        function toggleSlideShow() {
-            getSlideShowImage(true).effect("pulsate")
-            if (to) {
-                to = clearTimeout(to);
-            } else {
-                to = setTimeout(slideShow, timing);
-            }
-        }
     </script>
 
     <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet"/>
-    <link href="/styles/snapshots.css" rel="stylesheet"/>
+    <link href="styles/snapshots.css" rel="stylesheet"/>
 </head>
 <body>
 <form id="frmApp" role="form" method="post" action="/addApp">
     <div id="addApp">
         <div class="form-group">
             <div id="cameraContainer" class="input-group input-group-lg">
-                <label for="cameraKey" class="sr-only">Camera</label>
-                <span class="input-group-addon" id="basic-addon3">Camera</span>
+                <div class="input-group-prepend form-label">
+                    <span class="input-group-text" id="basic-addon1">Camera</span>
+                </div>
                 <select class="custom-select form-control" id="cameraKey">
                 </select>
             </div>
             <div id="startContainer" class="input-group input-group-lg">
-                <label for="startDate" class="sr-only">Start Date</label>
-                <span class="input-group-addon" id="basic-addon">Start Date</span>
+                <div class="input-group-prepend form-label">
+                    <span class="input-group-text" id="basic-addon">Start Date</span>
+                </div>
                 <input type="text" name="start" id="startDate"
                        placeholder="Start Date MM/DD/YYYY"
                        class="form-control"/>
             </div>
             <div id="endContainer" class="input-group input-group-lg">
-                <label for="endDate" class="sr-only">End Date</label>
-                <span class="input-group-addon" id="basic-addon2">End Date</span>
+                <div class="input-group-prepend form-label">
+                    <span class="input-group-text" id="basic-addon2">End Date</span>
+                </div>
                 <input type="text" name="appName" id="endDate"
                        placeholder="End Date MM/DD/YYYY"
                        class="form-control"/>
             </div>
-            <div class="input-group input-group-lg form-check">
-                <label class="input-group-addon form-check-label" for="sunrise">
-                    Sunrise
-                </label>
-                <input class="form-check-input form-control" type="checkbox" value="SUNRISE" id="sunrise"
-                       style="width:100px;">
-            </div>
-            <div class="input-group input-group-lg form-check">
-                <label class="input-group-addon form-check-label" for="solarNoon">
-                    Solar Noon
-                </label>
-                <input class="form-check-input form-control" type="checkbox" value="SOLAR_NOON" id="solarNoon"
-                       style="width:100px;">
-            </div>
-            <div class="input-group input-group-lg form-check">
-                <label class="input-group-addon form-check-label" for="sunset">
-                    Sunset
-                </label>
-                <input class="form-check-input form-control" type="checkbox" value="SUNSET" id="sunset"
-                       style="width:100px;">
+            <div id="phasesContainer" class="input-group input-group-lg">
+                <div class="input-group-prepend form-label" style="padding-right:10px;">
+                    <span class="input-group-text" id="basic-addon22">Phases</span>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" value="SUNRISE" id="sunrise">
+                    <label class="form-check-label" for="sunrise">Sunrise</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" value="SOLAR_NOON" id="solarNoon">
+                    <label class="form-check-label" for="solarNoon">Noon</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" value="SUNSET" id="sunset">
+                    <label class="form-check-label" for="sunset">Sunset</label>
+                </div>
             </div>
             <div class="btnContainer text-center">
                 <button class="btn btn-lg btn-primary btn-block" value="Save App" id="submitButton">View Snapshots
@@ -193,7 +190,7 @@
         </div>
     </div>
 </form>
-<div class='slideshow-container' onclick="toggleSlideShow();" id="holder">
+<div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-ride="carousel" data-interval="2000"/>
 </div>
 </body>
 </html>

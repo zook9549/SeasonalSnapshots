@@ -24,6 +24,12 @@ import java.util.Collection;
 @RestController
 public class SeasonalSnapshotsApplication {
 
+    @Autowired
+    public SeasonalSnapshotsApplication(SeasonalTimeService seasonalTimeService, SnapshotService snapshotService) {
+        this.seasonalTimeService = seasonalTimeService;
+        this.snapshotService = snapshotService;
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(SeasonalSnapshotsApplication.class, args);
     }
@@ -43,11 +49,15 @@ public class SeasonalSnapshotsApplication {
     private void archiveSnapshot(LocalDateTime dateTime, Snapshot.Phase phase) throws Exception {
         Collection<Camera> cameras = snapshotService.getCameras();
         for (Camera camera : cameras) {
-            LOG.debug(camera.toString());
+            LOG.debug("Fetching snapshot info for " + camera.toString());
             if (!snapshotService.isPhaseArchived(camera, phase, dateTime)) {
                 Snapshot snapshot = snapshotService.getSnapshot(camera, phase);
-                snapshotService.archiveSnapshot(camera, snapshot);
-                LOG.info("Archived image for phase " + phase);
+                if(snapshot.getImage().length > 0) {
+                    snapshotService.archiveSnapshot(camera, snapshot);
+                    LOG.info("Archived image for phase " + phase);
+                } else {
+                    LOG.error("Unable to retrieve snapshot for " + camera);
+                }
             } else {
                 LOG.debug("Snapshot already archived");
             }
@@ -88,10 +98,8 @@ public class SeasonalSnapshotsApplication {
     }
 
 
-    @Autowired
-    private SeasonalTimeService seasonalTimeService;
-    @Autowired
-    private SnapshotService snapshotService;
+    private final SeasonalTimeService seasonalTimeService;
+    private final SnapshotService snapshotService;
 
     private static final Logger LOG = LoggerFactory.getLogger(SeasonalSnapshotsApplication.class);
 }

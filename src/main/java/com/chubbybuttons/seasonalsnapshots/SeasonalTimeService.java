@@ -73,7 +73,7 @@ public class SeasonalTimeService {
                 LocalDateTime updatedDateTime = dateTimes.get(phase);
                 phaseSchedule.setLastSnapshotDateTime(phaseDateTime);
                 phaseSchedule.setNextSnapshotDateTime(updatedDateTime);
-                LOG.info("Updated next phase snapshot time");
+                LOG.info("Updated next phase snapshot time to " + updatedDateTime);
                 logPhase(phase);
             }
         }

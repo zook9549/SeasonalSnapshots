@@ -59,7 +59,7 @@ public class SeasonalTimeService {
     private LocalDateTime getLocalDateTime(LocalDate date, String timestamp) {
         LocalTime ldt = LocalTime.parse(timestamp, pattern);
         ZonedDateTime zdt = ZonedDateTime.ofLocal(ldt.atDate(date), ZoneId.of("UTC"), null);
-        return zdt.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+        return LocalDateTime.of(date, zdt.withZoneSameInstant(ZoneId.systemDefault()).toLocalTime());
     }
 
     public void updatePhaseSchedules() {

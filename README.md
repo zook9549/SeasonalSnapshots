@@ -16,11 +16,11 @@ There are two main integrations used to provide the data used in Seasonal Snapsh
 The biggest pain in the ass will be your Nest camera install!  Once that is done, you can get to work here.
 ### Nest API Setup
 * Go to https://console.developers.nest.com/ and setup a new OAuth client.
-  * No need to put in a redirect URL. While that app is setup for the callback, it's unnecessary. Your end goal is to get the token which doesn't expire until you general a new token or a bagillion years (whatever comes first).  Since this app wasn't built for general reusability across Nest clients (v2 perhaps?), you don't have to be too concerned with the robustness of this step.
+  * No need to put in a redirect URL. While the app is setup for the callback, it's unnecessary. Your end goal is to get the token which doesn't expire until you generate a new token or a bagillion years (whatever comes first).  Since this app wasn't built for general reusability across Nest clients (v2 perhaps), you don't have to be too concerned with the robustness of this step.
   * From the generated OAuth client setup, go to the URL provided.  Login in with you Nest account (the one tied to your cameras).  You will general a PIN.  Save this.
   * Using your favorite web service client (I used Postman), generate a call to https://api.home.nest.com/oauth2/access_token. It will need to be a post and your Body parameters (not headers) will need to include grant_type, code (the PIN), client_id, and client_secret.  The Nest docs are decent on these steps.  The response will give you your access_token.  This is your key to the kingdom.  Save this and you will use Jasypt to encrypt in a later step.
-  * Go ahead and run atest with your token at https://developer-api.nest.com.  Pass in your access_token in the header (according to Nest API docs).  You should get a response back with your camera information in JSON format.
-  * Test out the field returned from snapshot_url.  You should get an up-to-the-moment pic from your camera.  Interesting enough, this link is preauthorized so anybody could creep up on you.  I'm sure it expires quickly (?) but I didn't test it out.
+  * Go ahead and run a test with your token at https://developer-api.nest.com.  Pass in your access_token in the header (according to Nest API docs).  You should get a response back with your camera information in JSON format.
+  * Test out the field returned from snapshot_url.  You should get an up-to-the-moment pic from your camera.  Interesting enough, this link is preauthorized so anybody could creep on you.  I'm sure it expires quickly (?) but I didn't test it out.
 ### Sunrise Sunset API
   * Nothing fancy here.  No authentication needed.  You will just need to snag your latitude/longitude.  I used Google Maps for this.  You don't need to be uber-precise.  Just your general timezone.
   * https://api.sunrise-sunset.org/json?lat={latitude}&lng=-{longitude}
